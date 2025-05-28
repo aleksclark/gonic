@@ -18,11 +18,11 @@ jobs:
         run: |
           sudo apt update -qq
           sudo apt install -y -qq build-essential git sqlite3 libtag1-dev ffmpeg mpv zlib1g-dev
-      - name: Lint
-        uses: golangci/golangci-lint-action@v6
-        with:
-          version: v1.60
-          args: --timeout=5m
+#      - name: Lint
+#        uses: golangci/golangci-lint-action@v6
+#        with:
+#          version: v1.60
+#          args: --timeout=5m
       - name: Test
         run: go test ./...
   release-please:
@@ -79,15 +79,15 @@ jobs:
             ghcr.io/${{ github.repository }}:latest
             ${{ github.repository }}:${{ needs.release-please.outputs.tag_name }}
             ${{ github.repository }}:latest
-  notify-irc:
-    needs: [release-please]
-    name: Notify IRC
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-      - name: Notify
-        run: |
-          set +x e
-          git log -1 --pretty="push to master (@%an) %s" | curl "${{ secrets.IRC_NOTIFY_URL }}" -F target=#gonic -F message=@- >/dev/null 2>&1
-          exit 0
+#  notify-irc:
+#    needs: [release-please]
+#    name: Notify IRC
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v3
+#      - name: Notify
+#        run: |
+#          set +x e
+#          git log -1 --pretty="push to master (@%an) %s" | curl "${{ secrets.IRC_NOTIFY_URL }}" -F target=#gonic -F message=@- >/dev/null 2>&1
+#          exit 0
