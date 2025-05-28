@@ -28,7 +28,7 @@ COPY . .
 RUN GOOS=linux go build -o gonic cmd/gonic/gonic.go
 
 FROM alpine:3.20
-LABEL org.opencontainers.image.source https://github.com/sentriz/gonic
+LABEL org.opencontainers.image.source https://github.com/aleksclark/gonic
 RUN apk add -U --no-cache \
     ffmpeg \
     mpv \
