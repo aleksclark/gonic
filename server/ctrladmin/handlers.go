@@ -583,6 +583,44 @@ func (c *Controller) ServeInternetRadioStationDeleteDo(r *http.Request) *Respons
 	}
 }
 
+func (c *Controller) ServeUpdateGuestSettingsDo(r *http.Request) *Response {
+	// Checkbox only sends a value when checked
+	enabled := r.FormValue("guest_enabled") != ""
+	username := r.FormValue("guest_username")
+	password := r.FormValue("guest_password")
+
+	if username == "" {
+		return &Response{
+			redirect: r.Referer(),
+			flashW:   []string{"please provide a guest username"},
+		}
+	}
+
+	if password == "" {
+		return &Response{
+			redirect: r.Referer(),
+			flashW:   []string{"please provide a guest password"},
+		}
+	}
+
+	if err := c.dbc.SetSetting(db.GuestEnabled, fmt.Sprintf("%t", enabled)); err != nil {
+		return &Response{redirect: r.Referer(), flashW: []string{fmt.Sprintf("couldn't set guest enabled: %v", err)}}
+	}
+
+	if err := c.dbc.SetSetting(db.GuestUsername, username); err != nil {
+		return &Response{redirect: r.Referer(), flashW: []string{fmt.Sprintf("couldn't set guest username: %v", err)}}
+	}
+
+	if err := c.dbc.SetSetting(db.GuestPassword, password); err != nil {
+		return &Response{redirect: r.Referer(), flashW: []string{fmt.Sprintf("couldn't set guest password: %v", err)}}
+	}
+
+	return &Response{
+		redirect: "/admin/home",
+		flashN:   []string{"guest settings updated successfully"},
+	}
+}
+
 func getAvatarFile(r *http.Request) ([]byte, error) {
 	err := r.ParseMultipartForm(10 << 20) // keep up to 10MB in memory
 	if err != nil {
